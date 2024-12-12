@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/client_model.dart';
+import '../../domain/entities/client_model.dart';
 import 'detalle_tarima_screen.dart';
 
 class FormularioScreen extends StatefulWidget {
@@ -14,9 +14,7 @@ class FormularioScreen extends StatefulWidget {
 class _FormularioScreenState extends State<FormularioScreen> {
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedFechaEntrada;
-  DateTime? _selectedFechaSalida;
   final TextEditingController _dateEntradaController = TextEditingController();
-  final TextEditingController _dateSalidaController = TextEditingController();
 
   Future<void> _selectDate(BuildContext context, DateTime? initialDate,
       ValueChanged<DateTime> onDateSelected) async {
@@ -67,25 +65,10 @@ class _FormularioScreenState extends State<FormularioScreen> {
                 icon: const Icon(Icons.calendar_today),
                 onPressed: () => _selectDate(context, date, (selectedDate) {
                   setState(() {
-                    if (label == 'Fecha Salida' &&
-                        _selectedFechaEntrada != null &&
-                        selectedDate.isBefore(_selectedFechaEntrada!)) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              'La fecha de salida no puede ser anterior a la fecha de entrada'),
-                          backgroundColor: Colors.red,
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    } else {
-                      controller?.text =
-                          "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-                      if (label == 'Fecha Entrada') {
-                        _selectedFechaEntrada = selectedDate;
-                      } else if (label == 'Fecha Salida') {
-                        _selectedFechaSalida = selectedDate;
-                      }
+                    controller?.text =
+                        "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+                    if (label == 'Fecha Entrada') {
+                      _selectedFechaEntrada = selectedDate;
                     }
                   });
                 }),
@@ -115,6 +98,8 @@ class _FormularioScreenState extends State<FormularioScreen> {
       return [
         _buildTextField('Codigo', controller: TextEditingController()),
         const SizedBox(height: 20),
+        _buildTextField('Color', controller: TextEditingController()),
+        const SizedBox(height: 20),
         _buildTextField('Cantidad artículos dentro de la caja',
             controller: TextEditingController()),
         const SizedBox(height: 20),
@@ -123,13 +108,6 @@ class _FormularioScreenState extends State<FormularioScreen> {
           isDate: true,
           date: _selectedFechaEntrada,
           controller: _dateEntradaController,
-        ),
-        const SizedBox(height: 20),
-        _buildTextField(
-          'Fecha Salida',
-          isDate: true,
-          date: _selectedFechaSalida,
-          controller: _dateSalidaController,
         ),
       ];
     } else {
@@ -166,22 +144,22 @@ class _FormularioScreenState extends State<FormularioScreen> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
-                Text(
-                  'Cliente: ${widget.client.name}',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 20),
+              Text(
+                'Cliente: ${widget.client.name}',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
                 ),
-                const SizedBox(height: 16),
-                Container(
+              ),
+              const SizedBox(height: 16),
+              Form(
+                key: _formKey,
+                child: Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -197,28 +175,32 @@ class _FormularioScreenState extends State<FormularioScreen> {
                   child: Column(
                     children: [
                       ..._buildFormFields(),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: _handleFormSubmission,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Armar nueva tarima',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 40),
+              ElevatedButton(
+                onPressed: _handleFormSubmission,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 40,
+                  ),
+                ),
+                child: const Text(
+                  'Armar nueva tarima',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

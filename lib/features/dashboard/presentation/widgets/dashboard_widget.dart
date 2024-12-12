@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dashboard_card_widget.dart';
-import '../views/crear_tarima_screen.dart';
-import '../models/client_model.dart';
+import '../pages/crear_tarima_screen.dart';
+import '../../domain/entities/client_model.dart';
 
 class DashboardWidget extends StatefulWidget {
   const DashboardWidget({super.key});

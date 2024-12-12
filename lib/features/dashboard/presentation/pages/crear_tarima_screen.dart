@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/client_model.dart';
+import '../../domain/entities/client_model.dart';
 import 'formulario_screen.dart';
 
 class CrearTarimaScreen extends StatefulWidget {
